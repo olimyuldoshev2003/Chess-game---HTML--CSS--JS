@@ -2,6 +2,11 @@ const gameBoard = document.querySelector("#gameboard")
 const playerDisplay = document.querySelector("#player")
 const infoDisplay = document.querySelector("#info-display")
 const width = 8
+let playerGo = "black";
+
+playerDisplay.textContent = "black"
+
+
 const startPieces = [
   rook,
   knight,
@@ -74,8 +79,8 @@ function createBoard() {
         const square = document.createElement("div")
         square.classList.add("square")
         square.innerHTML = startPiece
+        square.firstChild?.setAttribute("draggable",true)
         square.setAttribute("square-id", i)
-        // square.classList.add("beige")
         const row = Math.floor((63 - i) / 8) + 1
         if (row % 2 === 0) {
            square.classList.add(i % 2 === 0 ? "beige" : "brown") 
@@ -96,3 +101,54 @@ function createBoard() {
 }
 
 createBoard();
+
+const allSquares = document.querySelectorAll(".square");
+
+allSquares.forEach(square => {
+    square.addEventListener("dragstart", dragStart);
+    square.addEventListener("dragover", dragOver);
+    square.addEventListener("drop", dragDrop);
+})
+
+let startPositionId;
+let draggedElement;
+
+function dragStart(event) {
+    startPositionId = event.target.parentNode.getAttribute("square-id");
+    draggedElement = event.target;
+}
+
+
+
+function dragOver(event) {
+    event.preventDefault();
+}
+
+function dragDrop(event) 
+{
+    event.stopPropagation();
+    const taken = event.target.classList.contains("pieces")
+
+
+    // event.target.parentNode.append(draggedElement)
+    // event.target.remove();
+    // event.target.append(draggedElement)
+    changePlayer();
+}
+
+function changePlayer() {
+    if(playerGo === "black") {
+        playerGo = "white";
+        playerDisplay.textContent = "white";
+    } else {
+        playerGo = "black";
+        playerDisplay.textContent = "black";
+
+    }
+}
+
+function reverseIds() {
+    const allSquares = document.querySelectorAll(".square");
+    allSquares.forEach((square, i) => square.setAttribute("square-id", (width * width - 1) - i));
+}
+
